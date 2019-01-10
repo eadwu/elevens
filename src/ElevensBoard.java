@@ -1,4 +1,5 @@
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The ElevensBoard class represents the board in a game of Elevens.
@@ -52,7 +53,11 @@ public class ElevensBoard extends Board {
      */
     @Override
     public boolean isLegal(List<Integer> selectedCards) {
-		/* *** TO BE IMPLEMENTED IN ACTIVITY 9 *** */
+        List<Card> cards = selectedCards.stream().map(v -> cardAt(v)).collect(Collectors.toList());
+        List<String> cardRanks = cards.stream().map(v -> v.rank()).collect(Collectors.toList());
+
+        return (selectedCards.size() == 2 && !this.containsJQK(selectedCards) && cards.stream().mapToInt(v -> v.pointValue()).sum() == 11) ||
+                (selectedCards.size() == 3 && cardRanks.contains("jack") && cardRanks.contains("queen") && cardRanks.contains("king"));
     }
 
     /**
@@ -65,7 +70,11 @@ public class ElevensBoard extends Board {
      */
     @Override
     public boolean anotherPlayIsPossible() {
-		/* *** TO BE IMPLEMENTED IN ACTIVITY 9 *** */
+        List<Card> cards = this.cardIndexes().stream().map(v -> cardAt(v)).collect(Collectors.toList());
+        List<String> cardRanks = cards.stream().map(v -> v.rank()).collect(Collectors.toList());
+
+        return (cardRanks.contains("jack") && cardRanks.contains("queen") && cardRanks.contains("king")) ||
+                this.containsPairSum11(this.cardIndexes());
     }
 
     /**
@@ -77,7 +86,14 @@ public class ElevensBoard extends Board {
      *              contain an 11-pair; false otherwise.
      */
     private boolean containsPairSum11(List<Integer> selectedCards) {
-		/* *** TO BE IMPLEMENTED IN ACTIVITY 9 *** */
+        List<Integer> cards = selectedCards.stream().map(v -> cardAt(v).pointValue()).collect(Collectors.toList());
+
+        for (int x = 0; x < cards.size(); x++) {
+            for (int y = x + 1; y < cards.size(); y++) {
+                if (cards.get(x) + cards.get(y) == 11) return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -89,6 +105,8 @@ public class ElevensBoard extends Board {
      *              include a jack, a queen, and a king; false otherwise.
      */
     private boolean containsJQK(List<Integer> selectedCards) {
-		/* *** TO BE IMPLEMENTED IN ACTIVITY 9 *** */
+        return selectedCards.stream().map(v -> cardAt(v)).filter(v -> v.rank() == "jack" ||
+                v.rank() == "queen" ||
+                v.rank() == "king").count() > 0;
     }
 }
