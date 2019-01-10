@@ -56,7 +56,7 @@ public class ElevensBoard extends Board {
         List<Card> cards = selectedCards.stream().map(v -> cardAt(v)).collect(Collectors.toList());
         List<String> cardRanks = cards.stream().map(v -> v.rank()).collect(Collectors.toList());
 
-        return (selectedCards.size() == 2 && !this.containsJQK(selectedCards) && cards.stream().mapToInt(v -> v.pointValue()).sum() == 11) ||
+        return (selectedCards.size() == 2 && !this.containsJQK(selectedCards) && (cards.stream().mapToInt(v -> v.pointValue()).sum() == 10 || cards.stream().mapToInt(v -> v.pointValue()).sum() == 13)) ||
                 (selectedCards.size() == 3 && cardRanks.contains("jack") && cardRanks.contains("queen") && cardRanks.contains("king"));
     }
 
@@ -90,7 +90,7 @@ public class ElevensBoard extends Board {
 
         for (int x = 0; x < cards.size(); x++) {
             for (int y = x + 1; y < cards.size(); y++) {
-                if (cards.get(x) + cards.get(y) == 11) return true;
+                if (cards.get(x) != 0 && cards.get(y) != 0 && cards.get(x) + cards.get(y) == 10 || cards.get(x) + cards.get(y) == 13) return true;
             }
         }
         return false;
